@@ -1,65 +1,78 @@
 # 🔐 Digital Locking System with Unauthorized Access Alert
 
-A hardware-based digital locking system designed using **discrete digital logic ICs**, without using a microcontroller. The system allows a user-defined password to be stored, verifies the entered password using digital logic, and provides visual and audible alerts for unauthorized access attempts.
+A hardware-based digital security system designed using **discrete combinational and sequential logic ICs**. The system provides password authentication and unauthorized access indication without using a microcontroller.
+
+This project was developed as part of an academic hardware design project.
 
 ---
 
-## 📌 Overview
+## 📌 Features
 
-This project implements a secure electronic locking system using fundamental digital electronics concepts.
-
-The system operates in two modes:
-
-- **Client Mode** – Used to set or update the saved password.
-- **User Mode** – Used to enter a password for authentication.
-
-The entered password is converted into binary, stored using shift registers, and compared with the saved password using XNOR logic.
-
-- ✅ Correct password → Green LED indicates successful authentication.
-- ❌ Incorrect password → Red LED and buzzer indicate unauthorized access.
+- 🔢 Password input using a numeric keypad
+- 🔐 Hardware-based password authentication
+- 💾 Password storage using **74194 universal shift registers**
+- 🔄 Separate password setting and user authentication modes
+- 🧮 Binary encoding and bitwise password comparison
+- 🟢 Correct password → Successful authentication indication
+- 🔴 Incorrect password → Unauthorized access indication
+- 🔊 Buzzer-based alert for invalid password entry
+- 🔄 Reset functionality
+- 🛠️ Complete circuit design, PCB implementation, simulation, and hardware testing
+- 🚫 No microcontroller used
 
 ---
 
-## 🏗️ System Architecture
+## 🧩 System Architecture
 
 ```text
-                    ┌─────────┐
-                    │  Reset  │
-                    └────┬────┘
-                         │
-                ┌────────▼────────┐
-                │ Mode Selection  │
-                │ Client / User   │
-                └────────┬────────┘
-                         │
-                    ┌────▼────┐
-                    │ Keypad  │
-                    └────┬────┘
-                         │
-                    ┌────▼─────┐
-                    │ Encoder  │
-                    └────┬─────┘
-                         │
-              ┌──────────┴──────────┐
-              │                     │
-      ┌───────▼────────┐   ┌────────▼───────┐
-      │ Saved Password │   │ User Password  │
-      │ Shift Registers│   │ Shift Registers│
-      └───────┬────────┘   └────────┬───────┘
-              │                     │
-              └──────────┬──────────┘
-                         │
-                   ┌─────▼─────┐
-                   │ Password  │
-                   │ Comparison│
-                   └─────┬─────┘
-                         │
-              ┌──────────┴──────────┐
-              │                     │
-        ┌─────▼─────┐         ┌─────▼─────┐
-        │ Correct   │         │ Incorrect │
-        │ Password  │         │ Password  │
-        └─────┬─────┘         └─────┬─────┘
-              │                     │
-         Green LED              Red LED +
-          Unlock                 Buzzer
+                   ┌───────────────┐
+                   │    Keypad     │
+                   │ Password Input│
+                   └───────┬───────┘
+                           │
+                           ▼
+                   ┌───────────────┐
+                   │     74147     │
+                   │ Priority      │
+                   │ Encoder       │
+                   └───────┬───────┘
+                           │
+                           ▼
+                   ┌───────────────┐
+                   │    74HC04     │
+                   │  NOT Gates    │
+                   └───────┬───────┘
+                           │
+              ┌────────────┴────────────┐
+              │                         │
+              ▼                         ▼
+     ┌─────────────────┐       ┌─────────────────┐
+     │ Saved Password  │       │ User Password   │
+     │ 74194 Registers │       │ 74194 Registers │
+     └────────┬────────┘       └────────┬────────┘
+              │                         │
+              └────────────┬────────────┘
+                           │
+                           ▼
+                   ┌───────────────┐
+                   │    CD4077     │
+                   │ XNOR Comparison│
+                   └───────┬───────┘
+                           │
+                           ▼
+                   ┌───────────────┐
+                   │ Authentication│
+                   │     Logic     │
+                   └───────┬───────┘
+                           │
+              ┌────────────┴────────────┐
+              │                         │
+              ▼                         ▼
+       ┌─────────────┐            ┌─────────────┐
+       │   Correct   │            │  Incorrect  │
+       │  Password   │            │  Password   │
+       └──────┬──────┘            └──────┬──────┘
+              │                          │
+              ▼                          ▼
+        🟢 Green LED                🔴 Red LED
+        Access Granted              + 🔊 Buzzer
